@@ -4,7 +4,7 @@
 
     <groupId>org.openrewrite.maven</groupId>
     <artifactId>rewrite-maven-plugin</artifactId>
-    <version>6.53.0-SNAPSHOT</version>
+    <version>6.61.0-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>rewrite-maven-plugin</name>
@@ -66,8 +66,8 @@
 
     <properties>
         <!-- Pinned versions, as RELEASE would make it into the published pom.xml  -->
-        <rewrite.version>8.96.0-SNAPSHOT</rewrite.version>
-        <rewrite-polyglot.version>2.16.0-SNAPSHOT</rewrite-polyglot.version>
+        <rewrite.version>8.104.0-SNAPSHOT</rewrite.version>
+        <rewrite-polyglot.version>2.24.0-SNAPSHOT</rewrite-polyglot.version>
 
         <!-- using 'ssh' url scheme by default, which assumes a human is performing git operations leveraging an ssh key -->
         <developerConnectionUrl>scm:git:ssh://git@github.com/openrewrite/rewrite-maven-plugin.git
@@ -92,6 +92,8 @@
         <rewrite-java.version>8.90.4</rewrite-java.version>
         <rewrite-migrate-java.version>3.42.1</rewrite-migrate-java.version>
         <rewrite-static-analysis.version>2.41.1</rewrite-static-analysis.version>
+        <!-- a mirror of no repository, unless the maven-central-mirror profile sets one -->
+        <its.mirrorOf>none</its.mirrorOf>
     </properties>
 
     <dependencyManagement>
@@ -571,6 +573,20 @@
                     </snapshots>
                 </pluginRepository>
             </pluginRepositories>
+        </profile>
+
+        <profile>
+            <!-- CGP's build image mirrors every repository through the Maven Central mirror in its user settings,
+                 as Central rate-limits CGP's address; ITs that bring their own user settings need it too -->
+            <id>maven-central-mirror</id>
+            <activation>
+                <property>
+                    <name>env.MAVEN_CENTRAL_MIRROR_URL</name>
+                </property>
+            </activation>
+            <properties>
+                <its.mirrorOf>*</its.mirrorOf>
+            </properties>
         </profile>
 
         <profile>
